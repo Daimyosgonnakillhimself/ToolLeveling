@@ -8,38 +8,38 @@ import com.tristankechlo.toolleveling.network.PacketHandler;
 import com.tristankechlo.toolleveling.utils.Names;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.event.CreativeModeTabEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.neoforged.neoforge.eventbus.api.IEventBus;
+import net.neoforged.neoforge.eventbus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(ToolLeveling.MOD_ID)
 public class ToolLeveling {
+
     public static final String MOD_ID = "toolleveling";
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public ToolLeveling(IEventBus modEventBus, ModContainer modContainer) {
-        ModItems.ITEMS.register(modEventBus);
-        ModEnchantments.ENCHANTMENTS.register(modEventBus);
+        ModRegistry.register(modEventBus);
+        modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::populateCreativeTab);
+        MinecraftForge.EVENT_BUS.register(this);
     }
-}
-
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        //make sure config folder exists
         ConfigManager.createConfigFolder();
-        //load configs from file
         ConfigManager.setup();
     }
 
     @SubscribeEvent
     public void onPlayerJoinEvent(final PlayerLoggedInEvent event) {
-        // send server-config to player
         ConfigSyncing.syncAllConfigsToOneClient((ServerPlayer) event.getEntity());
     }
 
@@ -48,5 +48,4 @@ public class ToolLeveling {
             event.accept(ModRegistry.TLT_ITEM.get());
         }
     }
-
 }
