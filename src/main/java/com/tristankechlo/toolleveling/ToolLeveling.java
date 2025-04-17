@@ -19,27 +19,16 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(Names.MOD_ID)
-public final class ToolLeveling {
+@Mod(ToolLeveling.MOD_ID)
+public class ToolLeveling {
+    public static final String MOD_ID = "toolleveling";
 
-    public static final Logger LOGGER = LogManager.getLogger(Names.MOD_NAME);
-
-    public ToolLeveling() {
-        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
-        PacketHandler.registerPackets();
-
-        ModRegistry.ITEMS.register(modEventBus);
-        ModRegistry.BLOCKS.register(modEventBus);
-        ModRegistry.TILE_ENTITIES.register(modEventBus);
-        ModRegistry.CONTAINER_TYPES.register(modEventBus);
-
-        modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(ClientSetup::init);
-        modEventBus.addListener(this::populateCreativeTab);
-
-        MinecraftForge.EVENT_BUS.register(this);
+    public ToolLeveling(IEventBus modEventBus, ModContainer modContainer) {
+        ModItems.ITEMS.register(modEventBus);
+        ModEnchantments.ENCHANTMENTS.register(modEventBus);
     }
+}
+
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         //make sure config folder exists
